@@ -326,6 +326,27 @@ def _parse_spans(raw: str, allowed_entities: tuple[str, ...]) -> list[Span]:
 # ---------------------------------------------------------------------------
 # Driver
 # ---------------------------------------------------------------------------
+_RETRY_DELAY_RE = __import__("re").compile(
+    r"(?:retry[- ]?delay|retry[- ]?in|retry in)[\"':\s]*['\"]?(\d+(?:\.\d+)?)\s*s",
+    flags=__import__("re").IGNORECASE,
+)
+
+
+def _parse_retry_after(error_message: str) -> float | None:
+    """Extract a server-suggested retry delay from a provider error.
+
+    Gemini's 429 errors carry a ``retry_delay: 25s`` hint; we honor it so
+    rate-limited batches resume cleanly without amplifying the storm.
+    """
+    match = _RETRY_DELAY_RE.search(error_message)
+    if match is None:
+        return None
+    try:
+        return float(match.group(1))
+    except (TypeError, ValueError):
+        return None
+
+
 def label_paragraph(
     paragraph_id: str,
     text: str,
@@ -337,8 +358,10 @@ def label_paragraph(
 ) -> LLMLabelResult:
     """Label one paragraph using any :class:`BaseLabeler` implementation.
 
-    Retries on transient errors (network, malformed JSON) up to
-    ``max_retries`` times with exponential backoff.
+    Retries on transient errors (network, malformed JSON, rate limits) up
+    to ``max_retries`` times. Backoff is exponential by default; if the
+    error message contains a server-suggested delay (e.g., Gemini's 429
+    ``retry_delay: 25s``), that value is honored instead.
     """
     user_prompt = USER_PROMPT_TEMPLATE.format(paragraph=text)
     last_error: str | None = None
@@ -368,7 +391,13 @@ def label_paragraph(
             last_error = f"{type(exc).__name__}: {exc}"
             if attempt == max_retries:
                 break
-            time.sleep(backoff_seconds * (2**attempt))
+            server_delay = _parse_retry_after(last_error)
+            if server_delay is not None:
+                # Add a small jitter on top of the server's hint to avoid
+                # thundering-herd on the next reset boundary.
+                time.sleep(server_delay + 1.0)
+            else:
+                time.sleep(backoff_seconds * (2**attempt))
 
     return LLMLabelResult(
         paragraph_id=paragraph_id,

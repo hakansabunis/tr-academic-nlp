@@ -149,7 +149,7 @@ def _run_provider(
             indent=2,
             ensure_ascii=False,
         )
-    print(f"[{provider}] Wrote raw results → {raw_path}")
+    print(f"[{provider}] Wrote raw results -> {raw_path}")
     return {
         "provider": provider,
         "stats": stats.to_dict(),
@@ -244,7 +244,7 @@ def _write_markdown_summary(summaries: list[dict[str, Any]], output_dir: Path) -
 
     summary_path = output_dir / "labeler-eval-summary.md"
     summary_path.write_text("\n".join(lines), encoding="utf-8")
-    print(f"[summary] Wrote markdown report → {summary_path}")
+    print(f"[summary] Wrote markdown report -> {summary_path}")
     return summary_path
 
 
@@ -268,8 +268,10 @@ def main() -> None:
     parser.add_argument(
         "--pause-seconds",
         type=float,
-        default=0.5,
-        help="Sleep between calls (Gemini free tier rate-limit kindness)",
+        default=15.0,
+        help="Sleep between calls. Gemini Free Tier is capped at 5 RPM, "
+        "so use >=15s for a safe 3 RPM margin. Paid tier or other "
+        "providers can drop this to 0.5s.",
     )
     parser.add_argument(
         "--env-file",

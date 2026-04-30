@@ -1,0 +1,67 @@
+{
+  "provider": "gemini",
+  "paragraphs": [
+    {
+      "paragraph_id": "sp-001",
+      "text": "Yılmaz, A.M. (2023). Boğaziçi Üniversitesi'nde yapılan çalışmada BERT modeli IMDB veri seti üzerinde F1 skoru ile değerlendirildi.",
+      "succeeded": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": []
+    },
+    {
+      "paragraph_id": "sp-002",
+      "text": "Bu tez çalışmasında, derin öğrenme yöntemlerinden CNN ve LSTM modelleri kullanılarak Türkçe duygu analizi gerçekleştirilmiştir. ODTÜ Bilgisayar Mühendisliği bölümünde 2024 yılında yapılan deneyler, ROUGE-L değeri 0.42 olarak ölçülmüştür.",
+      "succeeded": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": []
+    },
+    {
+      "paragraph_id": "sp-003",
+      "text": "Demir, K., & Kaya, S. (2022). Sağlık alanında doğal dil işleme uygulamaları. Türk Bilişim Dergisi, 15(3), 45-67. Çalışmada Random Forest ve XGBoost modelleri Hacettepe Üniversitesi Tıp Fakültesi veri seti üzerinde karşılaştırılmıştır.",
+      "succeeded": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": []
+    },
+    {
+      "paragraph_id": "sp-004",
+      "text": "Sosyal medya analizi için Twitter veri seti üzerinde Naive Bayes sınıflandırıcısı uygulanmış, doğruluk %78 olarak elde edilmiştir.",
+      "succeeded": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": []
+    },
+    {
+      "paragraph_id": "sp-005",
+      "text": "Çetin, A. (2021). Türkçe akademik metinlerde ders konusu çıkarımı. Yıldız Teknik Üniversitesi, Doktora Tezi. Gradient Boosting algoritması ile WikiNeural veri seti üzerinde Precision %92 oranında elde edilmiştir.",
+      "succeeded": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": []
+    }
+  ],
+  "stats": {
+    "calls": 5,
+    "successful_calls": 0,
+    "failed_calls": 5,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "retries": 0,
+    "invalid_json_count": 0,
+    "paragraphs_with_zero_entities": 5
+  },
+  "entity_counts": {}
+}

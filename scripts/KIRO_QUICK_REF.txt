@@ -1,0 +1,47 @@
+# Quick Reference for Kiro
+
+## One-Liner for Each Batch
+
+**Batch 1** (paragraphs 0-44):
+```
+cd C:\Users\SABUNIS\OneDrive\Desktop\tr-academic-nlp && scripts\run_labeling_for_kiro.bat 1
+```
+
+**Batch 2** (paragraphs 45-89) - *Run after 5 hours*:
+```
+cd C:\Users\SABUNIS\OneDrive\Desktop\tr-academic-nlp && scripts\run_labeling_for_kiro.bat 2
+```
+
+**Batch 3** (paragraphs 90-134) - *Run after another 5 hours*:
+```
+cd C:\Users\SABUNIS\OneDrive\Desktop\tr-academic-nlp && scripts\run_labeling_for_kiro.bat 3
+```
+
+... and so on up to **Batch 22** (paragraphs 945-989, remaining 948-993 will be skipped)
+
+## Timeline
+
+- **Batch 1**: Run now → ~25 min processing → ✓ 45 labeled
+- **Wait**: 5 hours (rate limit reset)
+- **Batch 2**: Run → ~25 min processing → ✓ 90 total labeled
+- **Wait**: 5 hours
+- **Batch 3**: Run → ~25 min processing → ✓ 135 total labeled
+- ... repeat pattern ...
+- **Batch 22**: Run → ~25 min → ✓ 990 total labeled (all done!)
+
+## Progress Check
+
+```
+cd C:\Users\SABUNIS\OneDrive\Desktop\tr-academic-nlp
+python -c "import json; f=open('docs/labeler-eval/cli-haiku-B.jsonl'); print('Labeled:', sum(1 for l in f if json.loads(l).get('succeeded')))"
+```
+
+## If Something Goes Wrong
+
+1. **Rate limit hit** (exit code 1, no stderr) → Wait 5 hours, run same batch again
+2. **Network error** → Rerun the batch number, script is resume-safe
+3. **Script not found** → Verify path: `C:\Users\SABUNIS\OneDrive\Desktop\tr-academic-nlp\scripts\run_labeling_for_kiro.bat`
+
+---
+
+**That's it!** Just run the right batch number at the right time. Script handles everything else.

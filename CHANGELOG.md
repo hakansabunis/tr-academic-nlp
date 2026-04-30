@@ -58,13 +58,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     (Faz 2 ~$10-20, Faz 6.5 ~$50-100, Faz 7 optional ~$15-25).
   - Pattern reference: UniversalNER (Zhou et al., NeurIPS 2023, arXiv:2308.03279).
 
+- **Faz 1 smoke run completed:**
+  - umutertugrul/turkish-academic-theses-dataset (CC-BY-4.0) loaded via HF
+    streaming, 2000 records sampled, 1986 surviving filtering ->
+    `data/corpora/smoke-2k/data.parquet`.
+  - `scripts/parquet_to_jsonl.py` — convert derived Parquet to the
+    `paragraph_id`/`text` JSONL shape consumed by the labeling pipeline.
+
+- **Faz 2 LLM batch labeling infrastructure:**
+  - `scripts/batch_label_via_claude_cli.py` — Pro/Max-friendly CLI batch
+    runner (`claude --print --model haiku` per batch). Resume-safe;
+    server-suggested retry-delay parsing; honors Gemini-style 429
+    `retry_delay` hints. Single + batch modes.
+  - `scripts/batch_label_via_anthropic_api.py` — Direct Anthropic Messages
+    API runner with token cost tracking. ~24-40x cheaper than Pro/Max
+    overage for the same workload.
+  - `scripts/merge_labeled.py` — Merge multiple labeling-pass JSONL files,
+    dedup by paragraph_id, prefer most recent succeeded=true record.
+  - Common batch logic in `BATCH_SYSTEM_PROMPT` + `_format_batch_prompt`
+    + `_parse_batch_response` shared between both runners.
+
+- **Faz 2 smoke run completed (1986 paragraphs):**
+  - Half A (993): CLI Pro/Max via `cli-haiku-A.jsonl` (extra usage ~$20).
+  - Half B (993): API direct via `api-haiku-B.jsonl` (~$0.86 metered).
+  - Merged in `cli-haiku-2k.jsonl` -> 1986/1986 success, 7830 total
+    entities (METODOLOJI 3033, YIL 1378, METRİK 1234, KURUM 1154,
+    YAZAR 579, DATASET 440, DERGİ 12).
+  - Quality discrepancy noted: B (batch prompt) detected ~2x more
+    METODOLOJI/METRİK/DATASET than A (mixed batch + single-paragraph
+    prompts during recovery). Manual review (R4.4 v2.4) will resolve
+    which set is closer to ground truth.
+
 ### Roadmap
-- Faz 1 next: real upstream smoke run requires `huggingface-cli login` +
-  accepting the dataset gating; full ~500K derivation thereafter.
-- Faz 2 next: integrate `llm_label.py` into `auto_label.py` so each
-  paragraph gets regex high-confidence pre-pass + Claude Haiku full
-  annotation for the rest, then 100h human-in-the-loop review (R4.4 v2.4).
-- Faz 3-7: NER training → embedder → summarizer → AI detector → SDK →
-  Space → Skills → Reasoner (optional).
+- Faz 2 next:
+  - Manual review (R4.4 v2.4) of all 1986 paragraphs — author edits over
+    LLM annotations, ~50-100h.
+  - Spot-check A vs B annotation quality on a 100-paragraph sample to
+    determine which prompt produced more accurate labels.
+  - Convert merged JSONL to CoNLL-2003 BIO + 80/10/10 stratified split
+    using `data/labeling/auto_label.py`.
+  - Optional: scale up from 1986 to 5K-30K (capstone vs paper scope
+    decision).
+- Faz 3-7: NER training -> embedder -> summarizer -> AI detector -> SDK
+  -> Space -> Skills -> Reasoner (optional).
 
 [Unreleased]: https://github.com/hakansabunis/tr-academic-nlp/compare/HEAD

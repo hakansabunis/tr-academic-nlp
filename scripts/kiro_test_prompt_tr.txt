@@ -1,0 +1,3 @@
+Merhaba! Bu bir test mesajıdır. Eğer bu mesajı görüyorsanız, Claude CLI düzgün çalışıyor demektir.
+
+Lütfen kısaca "Merhaba, ben Claude'um" şeklinde yanıt verin.

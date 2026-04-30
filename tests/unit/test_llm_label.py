@@ -345,6 +345,31 @@ class TestEdgeCases:
         assert not result.succeeded
 
 
+class TestRetryDelayParsing:
+    """Honor server-suggested retry delays (Gemini 429 'retry_delay: 25s')."""
+
+    def test_parses_gemini_retry_delay(self) -> None:
+        from data.labeling.llm_label import _parse_retry_after  # noqa: PLC0415
+
+        # Realistic Gemini error fragment
+        msg = "ClientError: 429 RESOURCE_EXHAUSTED. {'retryDelay': '25s'}"
+        assert _parse_retry_after(msg) == 25.0
+
+    def test_parses_retry_in_phrasing(self) -> None:
+        from data.labeling.llm_label import _parse_retry_after  # noqa: PLC0415
+
+        msg = "Please retry in 9.405446856s."
+        delay = _parse_retry_after(msg)
+        assert delay is not None
+        assert 9.0 < delay < 10.0
+
+    def test_returns_none_when_absent(self) -> None:
+        from data.labeling.llm_label import _parse_retry_after  # noqa: PLC0415
+
+        assert _parse_retry_after("some unrelated error") is None
+        assert _parse_retry_after("") is None
+
+
 class TestFactories:
     def test_get_default_labeler_unknown_provider(self) -> None:
         from data.labeling.llm_label import get_default_labeler  # noqa: PLC0415

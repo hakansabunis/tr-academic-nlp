@@ -1,0 +1,500 @@
+{
+  "provider": "claude-opus-4-7-chat",
+  "paragraphs": [
+    {
+      "paragraph_id": "sp-001",
+      "text": "Yılmaz, A.M. (2023). Boğaziçi Üniversitesi'nde yapılan çalışmada BERT modeli IMDB veri seti üzerinde F1 skoru ile değerlendirildi.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 0,
+          "end": 12,
+          "entity": "YAZAR",
+          "text": "Yılmaz, A.M.",
+          "confidence": 1.0
+        },
+        {
+          "start": 14,
+          "end": 18,
+          "entity": "YIL",
+          "text": "2023",
+          "confidence": 1.0
+        },
+        {
+          "start": 21,
+          "end": 42,
+          "entity": "KURUM",
+          "text": "Boğaziçi Üniversitesi",
+          "confidence": 1.0
+        },
+        {
+          "start": 65,
+          "end": 69,
+          "entity": "METODOLOJI",
+          "text": "BERT",
+          "confidence": 1.0
+        },
+        {
+          "start": 77,
+          "end": 81,
+          "entity": "DATASET",
+          "text": "IMDB",
+          "confidence": 1.0
+        },
+        {
+          "start": 101,
+          "end": 109,
+          "entity": "METRİK",
+          "text": "F1 skoru",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-002",
+      "text": "Bu tez çalışmasında, derin öğrenme yöntemlerinden CNN ve LSTM modelleri kullanılarak Türkçe duygu analizi gerçekleştirilmiştir. ODTÜ Bilgisayar Mühendisliği bölümünde 2024 yılında yapılan deneyler, ROUGE-L değeri 0.42 olarak ölçülmüştür.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 50,
+          "end": 53,
+          "entity": "METODOLOJI",
+          "text": "CNN",
+          "confidence": 1.0
+        },
+        {
+          "start": 57,
+          "end": 61,
+          "entity": "METODOLOJI",
+          "text": "LSTM",
+          "confidence": 1.0
+        },
+        {
+          "start": 128,
+          "end": 156,
+          "entity": "KURUM",
+          "text": "ODTÜ Bilgisayar Mühendisliği",
+          "confidence": 1.0
+        },
+        {
+          "start": 167,
+          "end": 171,
+          "entity": "YIL",
+          "text": "2024",
+          "confidence": 1.0
+        },
+        {
+          "start": 198,
+          "end": 205,
+          "entity": "METRİK",
+          "text": "ROUGE-L",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-003",
+      "text": "Demir, K., & Kaya, S. (2022). Sağlık alanında doğal dil işleme uygulamaları. Türk Bilişim Dergisi, 15(3), 45-67. Çalışmada Random Forest ve XGBoost modelleri Hacettepe Üniversitesi Tıp Fakültesi veri seti üzerinde karşılaştırılmıştır.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 0,
+          "end": 9,
+          "entity": "YAZAR",
+          "text": "Demir, K.",
+          "confidence": 1.0
+        },
+        {
+          "start": 13,
+          "end": 21,
+          "entity": "YAZAR",
+          "text": "Kaya, S.",
+          "confidence": 1.0
+        },
+        {
+          "start": 23,
+          "end": 27,
+          "entity": "YIL",
+          "text": "2022",
+          "confidence": 1.0
+        },
+        {
+          "start": 77,
+          "end": 97,
+          "entity": "DERGİ",
+          "text": "Türk Bilişim Dergisi",
+          "confidence": 1.0
+        },
+        {
+          "start": 123,
+          "end": 136,
+          "entity": "METODOLOJI",
+          "text": "Random Forest",
+          "confidence": 1.0
+        },
+        {
+          "start": 140,
+          "end": 147,
+          "entity": "METODOLOJI",
+          "text": "XGBoost",
+          "confidence": 1.0
+        },
+        {
+          "start": 158,
+          "end": 194,
+          "entity": "KURUM",
+          "text": "Hacettepe Üniversitesi Tıp Fakültesi",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-004",
+      "text": "Sosyal medya analizi için Twitter veri seti üzerinde Naive Bayes sınıflandırıcısı uygulanmış, doğruluk %78 olarak elde edilmiştir.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 26,
+          "end": 43,
+          "entity": "DATASET",
+          "text": "Twitter veri seti",
+          "confidence": 1.0
+        },
+        {
+          "start": 53,
+          "end": 64,
+          "entity": "METODOLOJI",
+          "text": "Naive Bayes",
+          "confidence": 1.0
+        },
+        {
+          "start": 94,
+          "end": 102,
+          "entity": "METRİK",
+          "text": "doğruluk",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-005",
+      "text": "Çetin, A. (2021). Türkçe akademik metinlerde ders konusu çıkarımı. Yıldız Teknik Üniversitesi, Doktora Tezi. Gradient Boosting algoritması ile WikiNeural veri seti üzerinde Precision %92 oranında elde edilmiştir.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 0,
+          "end": 9,
+          "entity": "YAZAR",
+          "text": "Çetin, A.",
+          "confidence": 1.0
+        },
+        {
+          "start": 11,
+          "end": 15,
+          "entity": "YIL",
+          "text": "2021",
+          "confidence": 1.0
+        },
+        {
+          "start": 67,
+          "end": 93,
+          "entity": "KURUM",
+          "text": "Yıldız Teknik Üniversitesi",
+          "confidence": 1.0
+        },
+        {
+          "start": 109,
+          "end": 126,
+          "entity": "METODOLOJI",
+          "text": "Gradient Boosting",
+          "confidence": 1.0
+        },
+        {
+          "start": 143,
+          "end": 153,
+          "entity": "DATASET",
+          "text": "WikiNeural",
+          "confidence": 1.0
+        },
+        {
+          "start": 173,
+          "end": 182,
+          "entity": "METRİK",
+          "text": "Precision",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-006",
+      "text": "Bu makalede, mT5 tabanlı Türkçe akademik özetleme modeli önerilmiştir. Marmara Üniversitesi tez koleksiyonundan alınan 5000 makale ile Spearman korelasyonu 0.85 olarak hesaplanmıştır.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 13,
+          "end": 16,
+          "entity": "METODOLOJI",
+          "text": "mT5",
+          "confidence": 1.0
+        },
+        {
+          "start": 71,
+          "end": 91,
+          "entity": "KURUM",
+          "text": "Marmara Üniversitesi",
+          "confidence": 1.0
+        },
+        {
+          "start": 135,
+          "end": 143,
+          "entity": "METRİK",
+          "text": "Spearman",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-007",
+      "text": "Karadeniz, M. (2020). Görüntü işleme alanında ResNet-50 mimarisi ile CIFAR-10 veri seti üzerinde mAP değeri 0.81 elde edilmiştir. KTÜ Elektrik-Elektronik Mühendisliği'nde yapılan çalışma.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 0,
+          "end": 13,
+          "entity": "YAZAR",
+          "text": "Karadeniz, M.",
+          "confidence": 1.0
+        },
+        {
+          "start": 15,
+          "end": 19,
+          "entity": "YIL",
+          "text": "2020",
+          "confidence": 1.0
+        },
+        {
+          "start": 46,
+          "end": 55,
+          "entity": "METODOLOJI",
+          "text": "ResNet-50",
+          "confidence": 1.0
+        },
+        {
+          "start": 69,
+          "end": 77,
+          "entity": "DATASET",
+          "text": "CIFAR-10",
+          "confidence": 1.0
+        },
+        {
+          "start": 97,
+          "end": 100,
+          "entity": "METRİK",
+          "text": "mAP",
+          "confidence": 1.0
+        },
+        {
+          "start": 130,
+          "end": 166,
+          "entity": "KURUM",
+          "text": "KTÜ Elektrik-Elektronik Mühendisliği",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-008",
+      "text": "Önerilen yöntem, Transformer mimarisi kullanılarak Mukayese benchmark'ında değerlendirilmiştir. METEOR skoru 0.34, BLEU değeri ise 0.28 olarak ölçülmüştür.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 17,
+          "end": 28,
+          "entity": "METODOLOJI",
+          "text": "Transformer",
+          "confidence": 1.0
+        },
+        {
+          "start": 51,
+          "end": 59,
+          "entity": "DATASET",
+          "text": "Mukayese",
+          "confidence": 1.0
+        },
+        {
+          "start": 96,
+          "end": 102,
+          "entity": "METRİK",
+          "text": "METEOR",
+          "confidence": 1.0
+        },
+        {
+          "start": 115,
+          "end": 119,
+          "entity": "METRİK",
+          "text": "BLEU",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-009",
+      "text": "Akın, B., Yıldız, R., & Şahin, T. (2025). Eğitim teknolojileri üzerine sistematik bir derleme. Anadolu Üniversitesi Eğitim Fakültesi Dergisi, 28(1). k-NN sınıflandırıcı PISA 2018 veri seti üzerinde test edilmiş, MSE 0.045 olarak raporlanmıştır.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 0,
+          "end": 8,
+          "entity": "YAZAR",
+          "text": "Akın, B.",
+          "confidence": 1.0
+        },
+        {
+          "start": 10,
+          "end": 20,
+          "entity": "YAZAR",
+          "text": "Yıldız, R.",
+          "confidence": 1.0
+        },
+        {
+          "start": 24,
+          "end": 33,
+          "entity": "YAZAR",
+          "text": "Şahin, T.",
+          "confidence": 1.0
+        },
+        {
+          "start": 35,
+          "end": 39,
+          "entity": "YIL",
+          "text": "2025",
+          "confidence": 1.0
+        },
+        {
+          "start": 95,
+          "end": 140,
+          "entity": "DERGİ",
+          "text": "Anadolu Üniversitesi Eğitim Fakültesi Dergisi",
+          "confidence": 1.0
+        },
+        {
+          "start": 149,
+          "end": 153,
+          "entity": "METODOLOJI",
+          "text": "k-NN",
+          "confidence": 1.0
+        },
+        {
+          "start": 169,
+          "end": 178,
+          "entity": "DATASET",
+          "text": "PISA 2018",
+          "confidence": 1.0
+        },
+        {
+          "start": 212,
+          "end": 215,
+          "entity": "METRİK",
+          "text": "MSE",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "paragraph_id": "sp-010",
+      "text": "Bu çalışmada XLM-RoBERTa modeli, Türkçe NER görevinde WikiANN-tr veri seti üzerinde fine-tune edilmiştir. Cohen Kappa skoru 0.87 olarak elde edilmiş, BERTurk ile karşılaştırıldığında %3 iyileşme sağlanmıştır.",
+      "succeeded": true,
+      "error": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "spans": [
+        {
+          "start": 13,
+          "end": 24,
+          "entity": "METODOLOJI",
+          "text": "XLM-RoBERTa",
+          "confidence": 1.0
+        },
+        {
+          "start": 54,
+          "end": 64,
+          "entity": "DATASET",
+          "text": "WikiANN-tr",
+          "confidence": 1.0
+        },
+        {
+          "start": 106,
+          "end": 117,
+          "entity": "METRİK",
+          "text": "Cohen Kappa",
+          "confidence": 1.0
+        },
+        {
+          "start": 150,
+          "end": 157,
+          "entity": "METODOLOJI",
+          "text": "BERTurk",
+          "confidence": 1.0
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "calls": 10,
+    "successful_calls": 10,
+    "failed_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "retries": 0,
+    "invalid_json_count": 0,
+    "paragraphs_with_zero_entities": 0,
+    "note": "Annotations produced by Claude Opus 4.7 in chat (Pro/Max subscription, no per-call API charge). For 30K-scale, use Claude Code CLI batch (`claude --print`) with the same prompt — see scripts/batch_label_via_claude_cli.py."
+  },
+  "entity_counts": {
+    "METODOLOJI": 13,
+    "METRİK": 10,
+    "YAZAR": 8,
+    "DATASET": 7,
+    "YIL": 6,
+    "KURUM": 6,
+    "DERGİ": 2
+  }
+}

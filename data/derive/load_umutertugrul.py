@@ -207,7 +207,7 @@ def derive(
     parquet_path = output_dir / "data.parquet"
     out_ds = Dataset.from_list(output_records)
     out_ds.to_parquet(parquet_path)
-    print(f"[derive] Wrote {len(output_records):,} records → {parquet_path}")
+    print(f"[derive] Wrote {len(output_records):,} records -> {parquet_path}")
 
     # Build final report (drop internal helper field)
     word_lengths = stats.pop("_abstract_words")
@@ -227,7 +227,7 @@ def derive(
     report_path = output_dir / "derivation_report.json"
     with report_path.open("w", encoding="utf-8") as handle:
         json.dump(stats, handle, indent=2, ensure_ascii=False)
-    print(f"[derive] Report → {report_path}")
+    print(f"[derive] Report -> {report_path}")
 
     return stats
 
