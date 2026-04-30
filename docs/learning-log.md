@@ -451,6 +451,25 @@ description: |
 
 ---
 
+## Topic 10b — LLM-as-labeler reading list (added v2.4)
+
+**Note:** Faz 2 NER labeling pipeline shifted from Ollama (lokal qwen2.5:7b verify) to Claude Haiku 3.5 (full annotation) + 100h human review (~12 sec/paragraph). Pattern grounded in:
+
+- **UniversalNER** (Zhou et al., NeurIPS 2023, [arXiv:2308.03279](https://arxiv.org/abs/2308.03279)) — ChatGPT used as labeler for open-domain NER, distilled into specialized student model. 45K input-output pairs, 240K entities.
+- **NuNER** ([arXiv:2402.15343](https://arxiv.org/html/2402.15343v1), 2024) — encoder pre-trained on LLM-annotated data; demonstrates LLM-as-labeler at scale.
+- **Astronomical NER** (RAA 2024) — GPT-4 vs Claude 2 head-to-head on scientific text. Claude 2 operationally functional but GPT-4 stronger; Claude Haiku 3.5 sits between these two in capability.
+- **Biomedical NER instruction tuning** (Bioinformatics 2024) — instruction-tuned models +5-30% F1 vs few-shot GPT-4 on disease/chemical/gene NER. Validates that fine-tuned BERT family on LLM-annotated data outperforms raw LLM zero-shot.
+
+**Cost ledger update:**
+- Faz 2 (NER labeling): Claude Haiku 3.5 × ~30K paragraphs × ~500 tokens I/O each ≈ **~$10-20**
+- Faz 6.5 (AI detector data): Claude Sonnet + GPT-4o + Gemini × ~5K paragraphs each ≈ **~$50-100**
+- Faz 7 (reasoner CoT, optional): Claude Sonnet × ~5K-10K Q&A pairs ≈ **~$15-25**
+- **Total Claude API cost (whole project): ~$75-145**
+
+**Ollama removed from project scope.** Local LLM inference is reserved for **end-user** runtime (`web=False` KVKK mode); the project's training pipeline handles upstream public datasets and uses cloud LLM APIs — not user data, so KVKK posture is unaffected.
+
+---
+
 ## Topic 10 — AI text detection
 
 Subtopics:

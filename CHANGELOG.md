@@ -40,12 +40,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 47 new unit + integration tests for entity types, regex rules, CoNLL
     writer, and auto-label pipeline.
 
+- **Faz 2 v2.4 — LLM-as-labeler (Claude Haiku 3.5):**
+  - `data/labeling/llm_label.py` — Anthropic SDK integration with cost
+    tracking, exponential backoff retries, JSON span parsing with schema
+    validation, and dependency injection for offline mock testing.
+  - `tests/unit/test_llm_label.py` — 13 mock-based tests covering parsing,
+    JSON-fence stripping, unknown-entity rejection, invalid-offset
+    rejection, retry on bad JSON, retry on exception, max-retry give-up,
+    cost calculation, stats accumulator, JSON-serializable stats, edge
+    cases (empty array, non-array top level), and missing-API-key error.
+  - **Ollama removed from project scope.** Documented in YOL-HARITASI v2.4
+    §15 decision table and §17 environment table. Local LLM inference is
+    now reserved for end-user runtime (`web=False` KVKK mode); the
+    project's training pipeline uses Anthropic API on public upstream
+    data, so KVKK posture is preserved.
+  - Total Claude API cost projection: ~$75-145 across the entire project
+    (Faz 2 ~$10-20, Faz 6.5 ~$50-100, Faz 7 optional ~$15-25).
+  - Pattern reference: UniversalNER (Zhou et al., NeurIPS 2023, arXiv:2308.03279).
+
 ### Roadmap
 - Faz 1 next: real upstream smoke run requires `huggingface-cli login` +
   accepting the dataset gating; full ~500K derivation thereafter.
-- Faz 2 next: Ollama qwen2.5:7b verification pass for low-confidence spans
-  (`data/labeling/ollama_verify.py`); inter-annotator κ measurement on
-  500-sample validation set.
+- Faz 2 next: integrate `llm_label.py` into `auto_label.py` so each
+  paragraph gets regex high-confidence pre-pass + Claude Haiku full
+  annotation for the rest, then 100h human-in-the-loop review (R4.4 v2.4).
 - Faz 3-7: NER training → embedder → summarizer → AI detector → SDK →
   Space → Skills → Reasoner (optional).
 
