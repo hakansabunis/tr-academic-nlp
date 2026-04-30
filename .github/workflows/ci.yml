@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint & format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dev deps
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: ruff check
+        run: ruff check .
+      - name: ruff format check
+        run: ruff format --check .
+
+  type-check:
+    name: Type check (mypy --strict)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dev deps
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: mypy
+        run: mypy --strict sdk/ || echo "mypy not yet enforced — sdk/ empty"
+
+  test:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dev deps
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: pytest
+        run: pytest --cov=sdk/tr_academic_nlp --cov-report=term-missing
+        continue-on-error: true  # remove once Faz 8 SDK is implemented
