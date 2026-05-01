@@ -1,4 +1,4 @@
-# Türkçe Akademik NLP Toolkit — Proje Yol Haritası v2.4
+# Türkçe Akademik NLP Toolkit — Proje Yol Haritası v3.0
 
 > **Bu dokümanın amacı:** Yeni bir Claude sohbetine veya Claude Code agent'ına
 > devredilebilen, sıfırdan projeyi anlatan ve uygulanmaya başlanabilecek tek
@@ -40,6 +40,30 @@
 > (d) §13 mülakat hikayesine "UniversalNER pattern Türkçe akademik domain'e taşındı + human review disiplini" cümlesi,
 > (e) Toplam Claude API maliyeti netleştirildi: ~$75-145 (Faz 2: ~$10-20, Faz 6.5: ~$50-100, Faz 7 opsiyonel: ~$15-25),
 > (f) requirements.md R4.3/R4.4/R10.4 güncellendi + yeni R4.8 (human-in-loop discipline).
+>
+> **v3.0 değişiklikleri (BÜYÜK PİVOT — Secure Academic Middleware):**
+> Mevcut iş kaybolmaz: Faz 0/1/2/3 ✅ tamam ve **anonymizer için kritik**. Aşağıdakiler
+> middleware mimarisine geçişi tanımlar.
+>
+> (a) **Tez yeniden çerçevelendi:** "6 Türkçe-özel model + 1 detector ile yarış" yerine
+>     "Yerel KVKK shield + Türkçe akademik prompt engine + Frontier/local LLM köprüsü";
+> (b) **Mimari değişti** (§6 + ARCHITECTURE.md): kullanıcı verisi → Anonymizer → PromptEngine →
+>     Ollama qwen2.5:7b (lokal, ücretsiz) → De-anonymizer → kullanıcı. Hiçbir veri makineden çıkmaz;
+> (c) **Kaldırılan modeller:** `trakad-summarizer-v1` (mT5), `trakad-detector-v1` (etik —
+>     false-positive akademik metinde sistematik), `trakad-reasoner-3b` (Phi-3 QLoRA);
+>     gerekçe: Frontier/local LLM'ler bu görevleri prompt-engineering ile çok daha iyi yapacak;
+> (d) **Korunan modeller (3):** `trakad-ner-v1` (anonymizer), `trakad-embed-v1` (RAG),
+>     `trakad-citation-v1` (atıf parser — Frontier'ler hala Türkçe atıfta zayıf);
+> (e) **%100 yerel + ücretsiz:** Faz 8'in LLM motoru Ollama qwen2.5:7b
+>     (RTX 3050 Ti 4GB GPU dostu, ~4.7GB Q4); kullanıcı için API ücreti yok;
+> (f) **Skills 5 → 4:** academic-search (RAG), citation-parser, **academic-anonymizer (yeni)**,
+>     **academic-pipeline (yeni — full middleware)**;
+> (g) **§10 fazları kısaltıldı:** eski Faz 6/6.5/7 kaldırıldı; yeni Faz 6 (Anonymizer modülü),
+>     Faz 7 (Türkçe akademik prompt library), Faz 8 (AcademicPipeline orchestrator);
+> (h) **Mülakat hikayesi (§13)** "Sword & Shield" → "Secure Academic Middleware" pivot;
+> (i) **Toplam süre:** 12-13 hafta → **6-8 hafta** (capstone deadline güvenli);
+> (j) **MVP çalışıyor (2026-05-01):** trakad-ner-v1 HF'de canlı, pipeline.py + Ollama
+>     qwen2.5:7b ile end-to-end Türkçe akademik özetleme test edildi (analyze_and_rewrite).
 
 ---
 
@@ -62,16 +86,27 @@ Bu dosyayı yeni bir Claude sohbetine yapıştırınca:
 
 ---
 
-## 1. Tek Cümlelik Tez (v2.1 — yeniden çerçevelendi)
+## 1. Tek Cümlelik Tez (v3.0 — Secure Academic Middleware)
 
-> *"Genel-amaçlı LLM'ler (ChatGPT, Claude, Gemini) Türkçe akademik dilde zayıf —
-> terminolojiyi bozuyor, atıf yapısını anlamıyor, akademik tonu yakalayamıyor.
-> Bu kalite boşluğunu **5 Türkçe-özel ince ayarlı model + 1 AI detector** ile
-> dolduruyorum; aynı altyapı KVKK isteyen kurumlar için lokal modda da çalışıyor."*
+> *"Genel-amaçlı LLM'ler (Claude, GPT-4, Qwen, Llama) güçlü, ama Türk akademisyenler
+> tezini ChatGPT'ye yükleyemiyor — KVKK riski + Türkçe akademik üslup zayıflığı
+> sorun. Çözüm: **yerel KVKK shield (NER anonymizer) + Türkçe akademik prompt engine
+> + yerel Ollama LLM** üçlüsü ile akademisyene 'GPT-4 kalitesi, KVKK uyumlu, ücretsiz'
+> diyebilen `tr-academic-nlp` middleware'i."*
 
-**İki katmanlı değer önerisi:**
-- **Birincil (kalite):** Türkçe akademik metni daha iyi okuma + yazma + analiz
-- **İkincil (gizlilik):** Aynı altyapı isteğe bağlı KVKK uyumlu lokal modda
+**Değer önerisi:**
+- **Yerel KVKK shield:** Hassas entity'ler (yazar, kurum, yıl vb.) lokal NER ile
+  maskelenir; LLM sadece anonim formla çalışır
+- **Türkçe akademik prompt engine:** Pasif çatı, üçüncü tekil şahıs, akademik
+  terminoloji, APA atıf — Frontier modelinin Türkçe akademik üslup zayıflığını kapatır
+- **Yerel LLM (Ollama qwen2.5:7b):** %100 ücretsiz, makinede kalır, RTX 3050 Ti 4GB
+  GPU yeter; istenirse Frontier API moduna da geçilebilir
+- **Capstone savunma cümlesi:** *"Akademisyen tezini ChatGPT'ye yükleyemiyor; biz
+  yerel kalkanla Frontier kalitesini KVKK uyumlu sunuyoruz."*
+
+**v3.0 öncesi tez (v2.4):** "6 Türkçe-özel model eğitiyorum" idi — Frontier modellerle
+yarışmak yerine onları wrap etmek daha realistik + future-proof + capstone scope için
+güvenli (12-13 hafta → 6-8 hafta).
 
 ## 2. Hedef Kitle
 
@@ -329,7 +364,36 @@ ChromaDB seçildi çünkü kullanıcı kendi PDF'ini ekleyince incremental gerek
 - **Sağlayıcı seçimi:** Brave Search API veya SearXNG (privacy-first); Perplexity/Gemini de opsiyonel
 - **Disclaimer:** SDK init'te `web=True` ise log'a "Web search açık — sorgu üçüncü tarafa gidiyor" satırı düşürülür
 
-## 10. Faz Planı (10-13 Hafta) — Acceptance Kriterli Sürüm
+## 10. Faz Planı (v3.0 — Secure Academic Middleware, 6-8 hafta)
+
+> **NOT:** Eski (v2.4) faz tablosu aşağıda olduğu gibi korundu (history için). v3.0
+> pivot ile **gerçek ilerleme + kalan iş** aşağıdaki "Mevcut Durum" tablosunda. Kaldırılan fazlar (Faz 6 mT5, Faz 6.5 detector, Faz 7 reasoner) ❌ ile işaretli; eklenen fazlar (yeni 6 anonymizer, 7 prompts, 8 pipeline) ✅ ile.
+
+### v3.0 Mevcut Durum (2026-05-01)
+
+| # | Faz | Durum | Kanıt |
+|---|---|---|---|
+| 0 | Repo + araştırma altyapısı | ✅ tamam | git history, learning-log.md |
+| 1 | Dataset preparation (umutertugrul → 1986) | ✅ tamam | data/corpora/smoke-2k/ |
+| 2 | NER labeling (Sonnet + offset fix + temizlik) | ✅ tamam | docs/labeler-eval/api-sonnet-2k-fixed.jsonl |
+| 3 | trakad-ner-v1 BERTurk fine-tune | ✅ HF'de canlı | https://huggingface.co/hakansabunis/trakad-ner-v1 |
+| 4 | Atıf parser (`trakad-citation-v1`) | ⏳ planlanan | — |
+| 5 | Embedder + ChromaDB local RAG | ⏳ planlanan | — |
+| ~~6~~ | ~~mT5 summarizer~~ | ❌ KALDIRILDI v3.0 | Frontier/local LLM yapacak |
+| ~~6.5~~ | ~~AI detector~~ | ❌ KALDIRILDI v3.0 | Etik (false positive) |
+| ~~7~~ | ~~Phi-3 reasoner~~ | ❌ KALDIRILDI v3.0 | Ollama qwen2.5:7b yeter |
+| **6** | **Anonymizer (KVKK shield)** | ✅ tamam | sdk/tr_academic_nlp/anonymizer.py |
+| **7** | **Türkçe akademik prompt library** | ✅ iskelet | sdk/tr_academic_nlp/prompts/system_prompts.py |
+| **8** | **AcademicPipeline + Ollama** | ✅ MVP çalışıyor | sdk/tr_academic_nlp/pipeline.py — analyze_and_rewrite() canlı |
+| 9.5 | HF Space (Gradio demo) | ⏳ planlanan | — |
+| 9.7 | Claude Skills (4 sub-skill) | ⏳ planlanan | — |
+| 10 | Docker + CI/CD + docs | ⏳ kısmi | .github/workflows/ci.yml var |
+
+**Kalan ana iş:** Faz 4 (atıf parser, 1 hafta) + Faz 5 (embedder + RAG, 1.5 hafta) + Faz 9.5 (Gradio Space, 5 gün) + Faz 9.7 (4 Skill, 1 hafta) ≈ **4-5 hafta** kapanış için.
+
+### Eski (v2.4) tablo — history için
+
+## 10b. Faz Planı (eski v2.4, history)
 
 | # | Faz | Süre | Çıktı | Kabul kriteri özet (Requirement N) |
 |---|---|---|---|---|
@@ -444,7 +508,24 @@ ChromaDB seçildi çünkü kullanıcı kendi PDF'ini ekleyince incremental gerek
 
 **14/14 madde karşılanır + AI detection bonus.** RLHF/DPO/PPO opsiyonel.
 
-## 13. Mülakat Hikayesi (v2.4 — Sword & Shield + Reference Impl + Ekosistem Genişletme + Disiplinli Annotation)
+## 13. Mülakat Hikayesi (v3.0 — Secure Academic Middleware)
+
+> *"Türk akademisyenler GPT-4 / Claude'a teze dair veri yükleyemiyor — KVKK riski
+> + Türkçe akademik üslup zayıflığı. Çözüm: yerel KVKK shield + Türkçe akademik
+> prompt engine + yerel Ollama LLM köprüsü. Kendi eğittiğim BERTurk NER (`trakad-ner-v1`)
+> hassas entity'leri lokalde maskeliyor; akademik prompt library Türkçe pasif çatı
+> + APA atıf zorluyor; Ollama qwen2.5:7b yerelde inference yapıyor — hiçbir veri
+> makineden çıkmıyor. **'GPT-4 kalitesi, KVKK uyumlu, ücretsiz' diyebiliyorum.**
+> Mimari Frontier modeller gelişince otomatik daha akıllanır — small custom
+> model'leri devlerle yarıştırmak yerine onları akıllıca paketledim. v3.0 pivot:
+> 6 ayrı model eğitmek yerine (mT5 summarizer, Phi-3 reasoner, AI detector
+> deprecate ettim) 3 utility model + middleware pattern; capstone scope 12-13
+> haftadan 6-8 haftaya indirildi. Anthropic Skills ekosisteminde ilk Türkçe
+> akademik 'KVKK shield + LLM gateway' paketi olarak yayınladım."*
+
+**v3.0 öncesi hikaye (v2.4 — history):**
+
+## 13b. Mülakat Hikayesi (eski v2.4 — Sword & Shield + Reference Impl + Ekosistem Genişletme + Disiplinli Annotation)
 
 > *"Genel-amaçlı LLM'ler Türkçe akademik dilde zayıf — terminoloji bozuyor, atıf
 > yapısını anlamıyor, akademik tonu yakalayamıyor. Bu kalite boşluğunu
@@ -776,6 +857,6 @@ sel BERT + 6 yeni akademik model = toplam 7+ model olur.
 
 **Yol haritası dosyası:** `Desktop/turkce-akademi-YOL-HARITASI.md`
 **Resmi spec:** `.kiro/specs/tr-academic-nlp/requirements.md` (R16 AI Detector + R13.5 Apache 2.0 güncellenecek)
-**Sürüm:** v2.4 — 2026-04-30 (Ollama → Claude Haiku + 100h human-in-loop review; UniversalNER pattern; toplam Claude API maliyet ~$75-145)
+**Sürüm:** v3.0 — 2026-05-01 (BÜYÜK PİVOT: Secure Academic Middleware; 6 model → 3 utility model + middleware; mT5 summarizer + Phi-3 reasoner + AI detector kaldırıldı; %100 yerel Ollama qwen2.5:7b; MVP canlı)
 **Sahibi:** Hakan Sabunis (hakansabunis@gmail.com)
 **Lisans:** Bu doküman serbest kullanım için (proje kendisi **Apache 2.0** olacak)
