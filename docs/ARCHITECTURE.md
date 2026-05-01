@@ -1,91 +1,68 @@
 # Architecture
 
-> **Status:** Skeleton — populated incrementally as components are built.
-> See [`turkce-akademi-YOL-HARITASI.md`](../../tools/turkce-akademi-YOL-HARITASI.md) §6 for the high-level system diagram.
+> **Status:** Middleware Pivot — System is transitioning from custom models to a secure API middleware.
 
 ## System overview
 
-(High-level diagram from yol-haritasi §6 will be embedded here as `architecture.svg` once Faz 0 design is finalized.)
-
 ```
 User interfaces:
-  HF Space (Gradio)  |  Python SDK  |  Claude Skills (×5)
+  HF Space (Gradio)  |  Python SDK  |  Claude Skills
         ↓                  ↓                  ↓
         └──────────────────┼──────────────────┘
                            ↓
-        ┌──────────────────┴──────────────────┐
-        ↓                                      ↓
-  Core models (×6)                      Data layer
-  - trakad-embed-v1                     - tr-thesis-academic-ready
-  - trakad-ner-v1                       - tr-thesis-embeddings-v1
-  - trakad-citation-v1                  - tr-academic-ner-corpus
-  - trakad-summarizer-v1                - tr-citation-pairs-tr
-  - trakad-detector-v1                  - tr-ai-vs-human-academic
-  - trakad-reasoner-3b (opt.)           ChromaDB (default) | FAISS (opt)
-                                        Web search (opt., default ON)
+              AcademicPipeline (Middleware Core)
+                           ↓
+  ┌─────────────────────────────────────────────────────────┐
+  │ 1. Local RAG (ChromaDB)                                 │
+  │    - Retrieves context using trakad-embed-v1            │
+  │                                                         │
+  │ 2. Local Anonymizer                                     │
+  │    - Uses trakad-ner-v1 to mask sensitive entities      │
+  │    - Dr. Ahmet -> [KİŞİ_1]                              │
+  │                                                         │
+  │ 3. Academic Prompt Engine                               │
+  │    - Injects domain-specific Turkish instructions       │
+  │                                                         │
+  │ 4. Frontier API Integration                             │
+  │    - Sends masked data + prompt to Claude/GPT-4o        │
+  │                                                         │
+  │ 5. De-anonymizer                                        │
+  │    - Restores [KİŞİ_1] -> Dr. Ahmet before output       │
+  └─────────────────────────────────────────────────────────┘
 ```
 
 ## Design decisions
 
-### Why Apache 2.0 over MIT?
+### Why pivot to a Middleware Architecture?
 
-Anthropic's [`anthropics/skills`](https://github.com/anthropics/skills) repo
-uses Apache 2.0 across most skills. Aligning license maximizes ecosystem
-acceptance probability when submitting skills upstream. Both licenses are
-similarly permissive.
+General-purpose LLMs (Claude 3.5, GPT-4o) are advancing too rapidly for small, specialized custom models (like a local 3B reasoner or an mT5 summarizer) to compete. However, these frontier models still face two major barriers in Turkish academia:
+1. **KVKK / Privacy:** Academics cannot upload unpublished theses or sensitive datasets to third-party APIs.
+2. **Domain Register:** Frontier models often hallucinate Turkish academic register and citation formats.
 
-### Why ChromaDB default, FAISS optional?
+This architecture solves both: it leverages the immense intelligence of frontier models via API, but wraps them in a **local security and prompt-engineering shell**. 
 
-- ChromaDB has native metadata filtering (year, field, etc.) and incremental
-  add (user-uploaded PDFs need this).
-- FAISS is faster and more memory-efficient for static large indexes —
-  exposed as opt-in (`backend="faiss"`) for advanced users.
+### Why ChromaDB default?
 
-### Why derive from upstream dataset instead of scraping?
+- ChromaDB has native metadata filtering (year, field, etc.) and incremental add.
+- It operates entirely locally, which is mandatory for the privacy guarantees of this toolkit.
 
-`umutertugrul/turkish-academic-theses-dataset` already provides 650K abstracts
-under CC-BY-4.0. Re-scraping would (a) take a week of unnecessary work,
-(b) produce a smaller corpus, (c) be a wheel-reinvention anti-pattern.
-v2.3 of the project plan drops the scraper requirement in favor of a
-deterministic derivation pipeline. See [`DERIVATION.md`](../DERIVATION.md).
+### What happened to the AI Detector (`trakad-detector-v1`)?
 
-### Why TR-MTEB instead of a self-authored embedding benchmark?
+The AI text detector has been deprecated from the core pipeline. Statistical AI detection is fundamentally flawed, especially for academic texts which inherently use formulaic, objective, "robotic" language. The false-positive rate on legitimate Turkish academic text is unacceptably high, creating severe ethical risks. The project now focuses entirely on the "Sword" (assistance) aspect securely.
 
-TR-MTEB (Baysan & Güngör, Findings of EMNLP 2025) is the peer-reviewed
-standard for Turkish embedding evaluation. Self-authored metrics are weaker
-in defense; aligning to a published benchmark makes results comparable to
-the broader Turkish NLP community. See [`BENCHMARKS.md`](../BENCHMARKS.md).
+### Why use `trakad-ner-v1` for Anonymization?
 
-### Why no AI humanizer?
-
-Building a "Turnitin bypass" tool would constitute an academic dishonesty
-aid — incompatible with Anthropic's Usage Policy and unjustifiable in a
-capstone defense. The toolkit instead ships an **AI detector** (the
-defensive counterpart). See `turkce-akademi-YOL-HARITASI.md` Appendix B.
-
-### Why split into 5 single-purpose Claude Skills instead of one mega-skill?
-
-Anthropic Skills convention favors single-focus skills. Bundling reduces
-discoverability and violates the "tek odak" principle in
-[Requirement 13.2](../../tools/.kiro/specs/tr-academic-nlp/requirements.md).
+Instead of using NER merely for analysis, it is weaponized for defense. By locally detecting `PER` (Person), `ORG` (Organization), and `LOC` (Location) entities using a small local model (BERTurk fine-tune), we can strip personally identifiable information (PII) before it ever touches the network.
 
 ## Component-level docs
 
-(To be added as components are built.)
-
-- `data/derive/` — Faz 1
-- `models/ner/` — Faz 3
-- `models/citation/` — Faz 4
-- `models/embedder/` — Faz 5
-- `models/summarizer/` — Faz 6
-- `models/detector/` — Faz 6.5
-- `models/reasoner/` — Faz 7 (optional)
-- `sdk/tr_academic_nlp/` — Faz 8
-- `space/app.py` — Faz 9.5
-- `skills/*/` — Faz 9.7
+- `data/derive/` — Data preparation for local embedding.
+- `models/embedder/` — Local embedding model (`trakad-embed-v1`).
+- `models/ner/` — Local NER model (`trakad-ner-v1`) used for anonymization.
+- `sdk/tr_academic_nlp/anonymizer.py` — The KVKK masking logic.
+- `sdk/tr_academic_nlp/prompts/` — The academic prompt library.
+- `sdk/tr_academic_nlp/pipeline.py` — The core `AcademicPipeline` orchestrator.
 
 ## Update policy
 
-This file is updated whenever a major design decision is made or a component
-is added. Each design decision must include the rationale for the choice
-and the alternatives considered (per Requirement 15.6).
+This file is updated whenever a major design decision is made or a component is added. Each design decision must include the rationale for the choice and the alternatives considered.

@@ -1,10 +1,8 @@
 # tr-academic-nlp
 
-> **Turkish Academic NLP Toolkit** — fine-tuned models, RAG, AI detection, and Anthropic Claude Skills for Turkish academic content.
+> **Turkish Academic NLP Toolkit** — A secure middleware and prompt engine for processing Turkish academic content with frontier LLMs (Claude, GPT).
 >
-> A **reference implementation for low-resource academic NLP skills**. Patterns
-> (BERTurk fine-tune + ChromaDB local RAG + Apache 2.0 + Turkish I/O with English
-> docs) are portable to any low-resource language.
+> A **reference implementation for low-resource academic NLP skills**. Provides local KVKK-compliant data anonymization and domain-specialized prompts to bridge the gap between Turkish academic register and general-purpose LLMs.
 
 [![CI](https://github.com/hakansabunis/tr-academic-nlp/actions/workflows/ci.yml/badge.svg)](https://github.com/hakansabunis/tr-academic-nlp/actions)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -12,37 +10,24 @@
 
 ## Why this toolkit?
 
-General-purpose LLMs (ChatGPT, Claude, Gemini) underperform on Turkish academic
-text — they break terminology, mishandle citation conventions, and fail to match
-academic register. This toolkit closes that quality gap with **6 Turkish-specific
-fine-tuned models** plus a **reference Anthropic Skills package**.
+General-purpose LLMs (ChatGPT, Claude, Gemini) are incredibly powerful, but they often struggle with Turkish academic terminology, mishandle citation conventions, and fail to match the passive academic register. 
 
-### Sword & Shield
+Instead of training small custom models that quickly become obsolete, `tr-academic-nlp` acts as a **Secure Academic Middleware**. It wraps frontier models with robust Turkish academic prompt engineering and a local anonymization layer, giving you GPT-4/Claude 3.5 quality **without compromising KVKK (data privacy) or academic integrity.**
 
-- **Sword** (better reading/writing): NER, citation parser, embedder,
-  summarizer, reasoner — write and analyze Turkish academic text with
-  domain-specialized models.
-- **Shield** (defensive): AI-text detector for Turkish academic content —
-  what Turnitin can't see in Turkish, this catches.
-
-KVKK-compliant local mode optional (no third-party data sharing).
-
-## Components
+## Core Components
 
 ```
-🤗 HuggingFace Hub          📦 PyPI + GitHub          🎯 Anthropic Skills
-6 models + 5 datasets       pip install               5 sub-skills
-+ 1 Gradio Space            + Apache 2.0 source       + Apache 2.0 reference
+1. Local RAG -> 2. Anonymizer -> 3. Prompt Engine -> 4. Frontier API
 ```
 
-| Model | Purpose |
+| Component | Purpose |
 |---|---|
-| [`trakad-embed-v1`](https://huggingface.co/hakansabunis/trakad-embed-v1) | 768-dim Turkish academic sentence embedding |
-| [`trakad-ner-v1`](https://huggingface.co/hakansabunis/trakad-ner-v1) | 7-entity academic NER (BERTurk fine-tune) |
-| [`trakad-citation-v1`](https://huggingface.co/hakansabunis/trakad-citation-v1) | APA / MLA / Chicago Turkish citation parser |
-| [`trakad-summarizer-v1`](https://huggingface.co/hakansabunis/trakad-summarizer-v1) | Turkish academic summarizer (mT5) |
-| [`trakad-detector-v1`](https://huggingface.co/hakansabunis/trakad-detector-v1) | Turkish academic AI-text detector |
-| [`trakad-reasoner-3b`](https://huggingface.co/hakansabunis/trakad-reasoner-3b) | Phi-3-mini QLoRA Turkish academic Q&A (optional) |
+| **Local RAG (ChromaDB)** | Retrieves relevant context from local academic papers using `trakad-embed-v1` without uploading your entire library to the cloud. |
+| **Local Anonymizer** | Repurposes `trakad-ner-v1` to mask sensitive entities (e.g., `Dr. Ahmet` -> `[KİŞİ_1]`) before sending data to external APIs (KVKK Shield). |
+| **Academic Prompt Engine** | A library of meticulously crafted system prompts that force LLMs to output perfect Turkish academic register, passive voice, and correct citations. |
+| **De-anonymizer** | Restores the original sensitive entities into the LLM's response locally before presenting it to the user. |
+
+*(Note: The previously planned `trakad-detector-v1` AI text detector is deprecated due to high false-positive rates inherent to AI detection in academic texts.)*
 
 ## Quick start
 
@@ -51,23 +36,17 @@ pip install tr-academic-nlp
 ```
 
 ```python
-from tr_academic_nlp import AcademicRAG, AIDetector
+from tr_academic_nlp import AcademicPipeline
 
-# Local Turkish academic RAG (web=False for KVKK compliance)
-rag = AcademicRAG(corpus="yok-tez", web=False)
-results = rag.search("derin öğrenme sel tahmini")
+# Initialize the secure middleware
+pipeline = AcademicPipeline(llm_provider="claude-3-5-sonnet")
 
-# AI text detection on Turkish academic text
-det = AIDetector()
-verdict = det.classify("Bu çalışmada derin öğrenme yöntemleri ile...")
-# {"label": "AI", "confidence": 0.92, "likely_source": "Claude"}
+# Analyze text securely (Entities are masked locally -> Claude -> Unmasked locally)
+text = "Prof. Dr. Ayşe Yılmaz'ın Hacettepe Üniversitesi'nde yaptığı araştırma..."
+result = pipeline.analyze_and_rewrite(text, task="summarize")
+
+print(result)
 ```
-
-## Benchmarks
-
-See [`BENCHMARKS.md`](BENCHMARKS.md) — evaluated on TR-MTEB (Baysan & Güngör,
-Findings of EMNLP 2025) and the project-internal Claude-alone vs Claude+Toolkit
-comparison.
 
 ## Documentation
 
@@ -82,13 +61,6 @@ comparison.
 
 [Apache License 2.0](LICENSE) — chosen to align with the Anthropic
 [`anthropics/skills`](https://github.com/anthropics/skills) ecosystem.
-
-## Citation
-
-If you use this toolkit, please cite both the upstream resources and this work:
-
-- [`umutertugrul/turkish-academic-theses-dataset`](https://huggingface.co/datasets/umutertugrul/turkish-academic-theses-dataset) (CC-BY-4.0)
-- TR-MTEB: Baysan & Güngör (Findings of EMNLP 2025)
 
 ## Author
 

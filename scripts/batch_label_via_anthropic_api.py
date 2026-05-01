@@ -48,7 +48,12 @@ from scripts.batch_label_via_claude_cli import (  # noqa: E402
 
 
 def _load_env(env_path: Path) -> None:
-    """Tiny KEY=VALUE parser; doesn't depend on python-dotenv."""
+    """Tiny KEY=VALUE parser; doesn't depend on python-dotenv.
+
+    Loads if the key is unset OR set to empty string. Real values in the
+    environment (e.g., from a parent shell that already exports the key)
+    take precedence — we don't override non-empty values.
+    """
     if not env_path.exists():
         return
     for raw_line in env_path.read_text(encoding="utf-8").splitlines():
@@ -58,7 +63,7 @@ def _load_env(env_path: Path) -> None:
         key, _, value = line.partition("=")
         key = key.strip()
         value = value.strip().strip('"').strip("'")
-        if key and value and key not in os.environ:
+        if key and value and not os.environ.get(key):
             os.environ[key] = value
 
 

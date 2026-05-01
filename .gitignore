@@ -72,6 +72,8 @@ logs/
 # Model artifacts (pushed to HF, not Git)
 models/*/checkpoints/
 models/*/wandb/
+models/ner/trakad-ner-v1/
+models/ner/data/
 *.bin
 *.safetensors
 *.gguf
