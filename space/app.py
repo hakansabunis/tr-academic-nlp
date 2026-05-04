@@ -124,4 +124,4 @@ geçen tezler de yakalanır.
     q.submit(_result_md, inputs=[q, k], outputs=out)
 
 if __name__ == "__main__":
-    demo.launch(theme=gr.themes.Soft())
+    demo.launch(server_name="0.0.0.0", server_port=7860)
