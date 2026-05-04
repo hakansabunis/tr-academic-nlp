@@ -1,5 +1,6 @@
 chromadb>=0.5,<1.0
 sentence-transformers>=3.0,<4.0
 huggingface_hub>=0.25,<1.0
+rank-bm25>=0.2.2
 # Python 3.13 dropped stdlib `audioop`; pydub (gradio dep) needs the LTS shim
 audioop-lts; python_version >= "3.13"
