@@ -39,11 +39,13 @@ class AcademicPipeline:
         ollama_url: str = DEFAULT_OLLAMA_URL,
         timeout: int = 180,
         anonymizer: Optional[LocalAnonymizer] = None,
+        rag_engine = None,
     ):
         self.llm_model = llm_model
         self.ollama_url = ollama_url.rstrip("/")
         self.timeout = timeout
-        self.anonymizer = anonymizer if anonymizer is not None else LocalAnonymizer(use_dummy=True)
+        self.anonymizer = anonymizer if anonymizer is not None else LocalAnonymizer(use_dummy=False)
+        self.rag_engine = rag_engine
 
     def _ollama_health(self) -> bool:
         """Return True if the Ollama daemon is reachable."""
@@ -81,18 +83,24 @@ class AcademicPipeline:
         response.raise_for_status()
         return response.json().get("response", "").strip()
 
-    def analyze_and_rewrite(self, text: str, task: str = "summarize") -> str:
-        """Secure analysis loop: anonymize → prompt → local LLM → de-anonymize."""
+    def analyze_and_rewrite(self, text: str, task: str = "summarize", rag_query: str = None) -> str:
+        """Secure analysis loop: anonymize → RAG context → prompt → local LLM → de-anonymize."""
         # 1. Anonymize sensitive entities locally
         masked_text, mapping = self.anonymizer.anonymize(text)
 
-        # 2. Fetch the correct academic system prompt
+        # 2. Add RAG Context if requested
+        if rag_query and self.rag_engine:
+            results = self.rag_engine.search(rag_query, top_k=2)
+            context_str = "\n\n".join([f"KAYNAK ({r['metadata']['title']}): {r['text']}" for r in results])
+            masked_text = f"Sorgu/Metin:\n{masked_text}\n\nYerel Veritabanı Bağlamı:\n{context_str}"
+
+        # 3. Fetch the correct academic system prompt
         system_prompt = get_prompt_for_task(task)
 
-        # 3. Call the local LLM (Ollama)
+        # 4. Call the local LLM (Ollama)
         llm_response = self._call_local_llm(system_prompt, masked_text)
 
-        # 4. De-anonymize before returning to the user
+        # 5. De-anonymize before returning to the user
         final_output = self.anonymizer.deanonymize(llm_response, mapping)
 
         return final_output

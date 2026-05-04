@@ -23,6 +23,8 @@ from __future__ import annotations
 import argparse
 import json
 import unicodedata
+from dotenv import load_dotenv
+load_dotenv()
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path

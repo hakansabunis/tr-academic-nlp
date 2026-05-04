@@ -69,9 +69,16 @@ logs/
 .env
 .env.local
 
+# Generated vector index (rebuilt via rag.py --index)
+data/chroma_db/
+
+# Local IDE / agent config
+.claude/
+
 # Model artifacts (pushed to HF, not Git)
 models/*/checkpoints/
 models/*/wandb/
+models/embed/trakad-embed-v1/
 models/ner/trakad-ner-v1/
 models/ner/data/
 *.bin
