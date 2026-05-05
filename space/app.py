@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 import re
 import time
+import urllib.parse
 from pathlib import Path
 
 import chromadb
@@ -24,7 +25,11 @@ EMBED_MODEL = os.getenv(
     "TRAKAD_EMBED_MODEL", "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
 )
 COLLECTION = "turkish_theses"
-YOK_URL_TMPL = "https://tez.yok.gov.tr/UlusalTezMerkezi/tezSorguSonucYeni.jsp?id={tez_no}"
+# YÖK Tez Merkezi has no public deep-link by tez_no (session-based access).
+# Best UX: open a Google search prefilled with the title; YÖK page surfaces
+# in the first results so the user can verify in one click.
+YOK_HOME = "https://tez.yok.gov.tr/UlusalTezMerkezi/giris.jsp"
+GOOGLE_SEARCH_TMPL = "https://www.google.com/search?q={q}"
 
 # RRF parameters
 RRF_K = 60
@@ -153,21 +158,16 @@ def _result_md(query: str, top_k: int) -> str:
         if len(snippet) > 350:
             snippet = snippet[:347] + "..."
 
-        link = YOK_URL_TMPL.format(tez_no=tez_no) if tez_no else ""
-        link_md = f" · [YÖK]({link})" if link else ""
+        # Google search by title — most reliable way to land on the YÖK page
+        gquery = urllib.parse.quote_plus(f'"{title}" YÖK tez')
+        google_link = GOOGLE_SEARCH_TMPL.format(q=gquery)
 
-        # Tag which branches surfaced this result
-        flags = []
-        if r["in_vec"]:
-            flags.append("semantic")
-        if r["in_bm25"]:
-            flags.append("keyword")
-        flag_md = f" `({'+'.join(flags)})`" if flags else ""
-
-        lines.append(f"**[{i}] {title}**{link_md}{flag_md}")
+        lines.append(f"**[{i}] {title}**")
         lines.append(f"_{author} · {year} · {subject}_")
         lines.append("")
         lines.append(f"> {snippet}")
+        lines.append("")
+        lines.append(f"🔍 [Google'da ara]({google_link})  ·  [YÖK Tez Merkezi]({YOK_HOME})")
         lines.append("")
         lines.append("---")
     return "\n".join(lines)
@@ -176,17 +176,12 @@ def _result_md(query: str, top_k: int) -> str:
 with gr.Blocks(title="trakad — Türkçe Akademik Arama") as demo:
     gr.Markdown(
         f"""
-# trakad — Türkçe Akademik Hybrid Search
+# trakad — Türkçe Akademik Arama
 
-48,376 Türkçe tez özeti üzerinde **vektör + BM25 hibrit** arama.
-Anlam tabanlı eşleşme (mpnet embeddings) ile kelime tabanlı eşleşme
-(BM25) [Reciprocal Rank Fusion](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)
-ile birleştirilir — tek başına vektörün kaçırdığı nadir terimleri,
-tek başına BM25'in kaçırdığı eş anlamlıları yakalar.
+{TOTAL:,} Türkçe tez özeti üzerinde anlam-tabanlı arama. "Yapay zeka"
+yazınca "AI", "makine öğrenmesi" geçen tezler de yakalanır.
 
-**Embedding:** `{EMBED_MODEL.split("/")[-1]}` ·
-**Index:** ChromaDB + BM25 · **Korpus:** {TOTAL:,} tez ·
-**Kaynak:** umutertugrul/turkish-academic-theses-dataset (CC-BY-4.0)
+_Korpus: [umutertugrul/turkish-academic-theses-dataset](https://huggingface.co/datasets/umutertugrul/turkish-academic-theses-dataset) (CC-BY-4.0)_
 """
     )
     with gr.Row():
